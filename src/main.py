@@ -15,10 +15,14 @@ def main():
             720
     )       # Window width and height
     pg.init
-    ctypes.windll.user32.SetProcessDPIAware() # keeps windows GUI scale settings from messing with resolution
+    pg.font.init
+    os.environ['SDL_VIDEO_CENTERED'] = '1' # centers window when not in fullscreen
+    ctypes.windll.user32.SetProcessDPIAware() # keeps Windows GUI scale settings from messing with resolution
     display = pg.display.set_mode((W, H), pg.FULLSCREEN)
     fullscreen = True
     pg.display.set_caption('Dress Up Game')
+    app = pywinauto.Application().connect(title_re='Dress Up Game')
+    app.top_window().set_focus() #Activates window if it isn't launched in fullscreen
     clock = pg.time.Clock()
     running = True
 

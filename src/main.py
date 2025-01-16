@@ -17,8 +17,10 @@ def main():
     pg.init
     ctypes.windll.user32.SetProcessDPIAware() # keeps windows GUI scale settings from messing with resolution
     display = pg.display.set_mode((W, H), pg.FULLSCREEN)
+    fullscreen = True
     pg.display.set_caption('Dress Up Game')
     clock = pg.time.Clock()
+    print(pg.display.list_modes())
     running = True
 
     while running: 
@@ -29,6 +31,16 @@ def main():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     running = False
+                if event.key == pg.K_f:
+                    fullscreen = not fullscreen
+                    print(f'fullscreen = {fullscreen}')
+                    if fullscreen:
+                        display = pg.display.set_mode((W, H), pg.FULLSCREEN)
+                    else:
+                        display = pg.display.set_mode((W, H))
+
+        pg.display.flip()
+
     pg.quit()
     exit()
 

@@ -16,7 +16,7 @@ def main():
     )       # Window width and height
     pg.init
     ctypes.windll.user32.SetProcessDPIAware() # keeps windows GUI scale settings from messing with resolution
-    display = pg.display.set_mode((W, H))
+    display = pg.display.set_mode((W, H), pg.FULLSCREEN)
     pg.display.set_caption('Dress Up Game')
     clock = pg.time.Clock()
     running = True

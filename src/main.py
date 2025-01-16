@@ -7,3 +7,9 @@ import tkinter
 import ctypes
 import pywinauto
 import pyautogui
+
+def main():
+    print('hello world')
+
+if __name__ == "__main__":
+    main()

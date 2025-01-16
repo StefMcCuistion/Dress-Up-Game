@@ -35,10 +35,16 @@ def main():
 
     # Imports
     player_surf = pg.image.load(join('img', 'test_player.png')).convert_alpha()
+    player_surf = pg.transform.scale_by(player_surf, .3)
+
+    # Sprites
+    sprites = pg.sprite.Group()
+    player = Player(sprites, player_surf)
 
     # Loop
     while running: 
         dt = clock.tick() / 1000
+        # Event loop
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -51,7 +57,9 @@ def main():
                         display = pg.display.set_mode((W, H), pg.FULLSCREEN)
                     else:
                         display = pg.display.set_mode((W, H))
-
+        # Render
+        display.fill('dark gray')
+        sprites.draw(display)
         pg.display.flip()
 
     pg.quit()

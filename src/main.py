@@ -18,18 +18,19 @@ def main():
 
     # Setup
     W, H = (
-            1280, 
+            1280,
             720
     )       # Window width and height
     pg.init
     pg.font.init
-    os.environ['SDL_VIDEO_CENTERED'] = '1' # centers window when not in fullscreen
     ctypes.windll.user32.SetProcessDPIAware() # keeps Windows GUI scale settings from messing with resolution
     display = pg.display.set_mode((W, H), pg.FULLSCREEN)
     fullscreen = True
     pg.display.set_caption('Dress Up Game')
-    app = pywinauto.Application().connect(title_re='Dress Up Game')
-    app.top_window().set_focus() #Activates window if it isn't launched in fullscreen
+    if not fullscreen: # These just slow down game launch if done in fullscreen
+        os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers window
+        app = pywinauto.Application().connect(title_re='Dress Up Game')
+        app.top_window().set_focus() #Activates window
     clock = pg.time.Clock()
     running = True
 
@@ -42,7 +43,7 @@ def main():
     player = Player(sprites, player_surf)
 
     # Loop
-    while running: 
+    while running:
         dt = clock.tick() / 1000
         # Event loop
         for event in pg.event.get():

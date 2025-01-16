@@ -20,7 +20,6 @@ def main():
     fullscreen = True
     pg.display.set_caption('Dress Up Game')
     clock = pg.time.Clock()
-    print(pg.display.list_modes())
     running = True
 
     while running: 
@@ -33,7 +32,6 @@ def main():
                     running = False
                 if event.key == pg.K_f:
                     fullscreen = not fullscreen
-                    print(f'fullscreen = {fullscreen}')
                     if fullscreen:
                         display = pg.display.set_mode((W, H), pg.FULLSCREEN)
                     else:

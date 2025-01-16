@@ -9,6 +9,13 @@ import pywinauto
 import pyautogui
 
 def main():
+
+    class Player(pg.sprite.Sprite):
+        def __init__(self, groups, surf):
+            super().__init__(groups)
+            self.image = surf
+            self.rect = self.image.get_frect(center = (W / 2, H / 2))
+
     # Setup
     W, H = (
             1280, 
@@ -26,6 +33,10 @@ def main():
     clock = pg.time.Clock()
     running = True
 
+    # Imports
+    player_surf = pg.image.load(join('img', 'test_player.png')).convert_alpha()
+
+    # Loop
     while running: 
         dt = clock.tick() / 1000
         for event in pg.event.get():

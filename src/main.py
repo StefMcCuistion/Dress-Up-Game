@@ -23,7 +23,18 @@ def main():
 
         def change_appearance(self):
             surf = pg.image.load(join('img', 'player_empty.png')).convert_alpha
-            surf.blit()
+            surf.blit(pg.image.load(join('img', f'player_legs_{self.skin}.png'))).convert_alpha
+            if self.race == 'cat':
+                surf.blit(pg.image.load(join('img', f'player_tail_{self.hair}.png'))).convert_alpha
+            surf.blit(pg.image.load(join('img', f'player_bottom_{self.bottom}.png'))).convert_alpha
+            surf.blit(pg.image.load(join('img', f'player_torso_{self.skin}.png'))).convert_alpha
+            surf.blit(pg.image.load(join('img', f'player_top_{self.top}.png'))).convert_alpha
+            surf.blit(pg.image.load(join('img', f'player_head_{self.skin}_{self.race}.png'))).convert_alpha
+            if self.race == 'cat':
+                surf.blit(pg.image.load(join('img', f'player_ears_{self.hair}.png'))).convert_alpha
+            surf.blit(pg.image.load(join('img', f'player_face.png'))).convert_alpha
+            surf = pg.transform.scale_by(surf, .3)
+            self.image = surf
 
     # Setup
     W, H = (
@@ -67,6 +78,8 @@ def main():
                         display = pg.display.set_mode((W, H), pg.FULLSCREEN)
                     else:
                         display = pg.display.set_mode((W, H))
+            if event.type == pg.MOUSEBUTTONDOWN:
+                player.change_appearance()
         # Render
         display.fill('dark gray')
         sprites.draw(display)

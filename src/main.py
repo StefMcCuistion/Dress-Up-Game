@@ -15,6 +15,15 @@ def main():
             super().__init__(groups)
             self.image = surf
             self.rect = self.image.get_frect(center = (W / 2, H / 2))
+            self.skin = 'fair'
+            self.hair = 'brown'
+            self.race = 'cat'
+            self.top = 'crop'
+            self.bottom = 'shorts'
+
+        def change_appearance(self):
+            surf = pg.image.load(join('img', 'player_empty.png')).convert_alpha
+            surf.blit()
 
     # Setup
     W, H = (
@@ -35,7 +44,7 @@ def main():
     running = True
 
     # Imports
-    player_surf = pg.image.load(join('img', 'test_player.png')).convert_alpha()
+    player_surf = pg.image.load(join('img', 'player_test.png')).convert_alpha()
     player_surf = pg.transform.scale_by(player_surf, .3)
 
     # Sprites

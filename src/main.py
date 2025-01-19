@@ -23,8 +23,7 @@ def main():
 
         def change_appearance(self):
             surf = pg.Surface((1766, 2513), pg.SRCALPHA)
-            legs = pg.image.load(join('img', f'player_legs_{self.skin}.png'))
-            surf.blit(legs)
+            surf.blit(pg.image.load(join('img', f'player_legs_{self.skin}.png')))
             if self.race == 'cat':
                 surf.blit(pg.image.load(join('img', f'player_tail_{self.hair}.png')))
             surf.blit(pg.image.load(join('img', f'player_bottom_{self.bottom}.png')))

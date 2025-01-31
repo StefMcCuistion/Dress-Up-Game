@@ -16,23 +16,26 @@ def main():
             self.image = surf
             self.rect = self.image.get_frect(center = (W / 2, H / 2))
             self.skin = 'fair'
-            self.hair = 'brown'
+            self.hair = 'emo'
+            self.hair_color = 'blonde'
             self.race = 'cat'
-            self.top = 'crop'
+            self.top = 'coat'
             self.bottom = 'shorts'
 
         def change_appearance(self):
             surf = pg.Surface((1766, 2513), pg.SRCALPHA)
             surf.blit(pg.image.load(join('img', f'player_legs_{self.skin}.png')))
             if self.race == 'cat':
-                surf.blit(pg.image.load(join('img', f'player_tail_{self.hair}.png')))
+                surf.blit(pg.image.load(join('img', f'player_tail_{self.hair_color}.png')))
             surf.blit(pg.image.load(join('img', f'player_bottom_{self.bottom}.png')))
+            surf.blit(pg.image.load(join('img', f'player_hair_back_{self.hair}_{self.hair_color}.png')))
             surf.blit(pg.image.load(join('img', f'player_torso_{self.skin}.png')))
             surf.blit(pg.image.load(join('img', f'player_top_{self.top}.png')))
             surf.blit(pg.image.load(join('img', f'player_head_{self.skin}_{self.race}.png')))
             if self.race == 'cat':
-                surf.blit(pg.image.load(join('img', f'player_ears_{self.hair}.png')))
+                surf.blit(pg.image.load(join('img', f'player_ears_{self.hair_color}.png')))
             surf.blit(pg.image.load(join('img', f'player_face.png')))
+            surf.blit(pg.image.load(join('img', f'player_hair_front_{self.hair}_{self.hair_color}.png')))
             surf = pg.transform.scale_by(surf, .3)
             self.image = surf
 

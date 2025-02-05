@@ -7,7 +7,6 @@ import tkinter
 import ctypes
 import pywinauto
 import pyautogui
-from settings import *
 
 W, H = (
         1280,

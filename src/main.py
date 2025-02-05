@@ -66,9 +66,6 @@ class Game():
 
     def run(self):
 
-
-
-
         # Loop
         while self.running:
             self.dt = self.clock.tick() / 1000

@@ -1,3 +1,5 @@
 pygame-ce
 pywinauto
 pyautogui
+black
+flake8

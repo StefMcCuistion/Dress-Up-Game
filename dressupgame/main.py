@@ -20,7 +20,7 @@ import settings
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, groups, surf, parts):
+    def __init__(self, groups, parts):
         super().__init__(groups)
         self.parts = parts
         self.skin_colors = ["fair"]
@@ -30,18 +30,15 @@ class Player(pg.sprite.Sprite):
         self.bottoms = ["shorts"]
         self.tops = ["crop", "coat"]
         self.change_appearance()
-        self.rect = self.image.get_frect(center=(settings.W / 2, settings.H / 2))
+        self.rect = self.image.get_frect(topleft=(0, 0))
 
     def change_appearance(self):
         surf = pg.Surface((1766, 2513), pg.SRCALPHA)
 
-        # get a random item from the self.skin_colors list
         skin_index = randint(0, len(self.skin_colors) - 1)
-        # hairstyle_idx = randint(len(self.hairstyles))
-        # hair_color_idx = randint(len(self.hair_colors))
 
         for part in self.parts:
-            surf.blit(self.parts[part][skin_index])
+            surf.blit(self.parts[part][0])
             # if self.race == "cat":
             #     surf.blit(pg.image.load(join("img", f"player_tail_{self.hair_color}.png")))
             # surf.blit(pg.image.load(join("img", f"player_bottom_{self.bottom}.png")))
@@ -66,13 +63,13 @@ class Game:
         pg.init()
         pg.font.init()
         ctypes.windll.user32.SetProcessDPIAware()  # keeps Windows GUI scale settings from messing with resolution
-        self.display = pg.display.set_mode((settings.W, settings.H), pg.WINDOWPOS_CENTERED)
+        self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
         self.fullscreen = True
         pg.display.set_caption("Dress Up Game")
         if not self.fullscreen:  # These just slow down game launch if done in fullscreen
             os.environ["SDL_VIDEO_CENTERED"] = "1"  # Centers window
             app = pywinauto.Application().connect(title_re="Dress Up Game")
-            app.top_window().set_focus()  # Activates window
+            app.top_window().set_focus() # Activates window
         self.clock = pg.time.Clock()
         self.running = True
 
@@ -80,15 +77,12 @@ class Game:
         asset_location = os.path.join(current_dir, "assets")
 
         # Imports
-        self.player_surf = pg.image.load(join(asset_location, "img", "player_test.png")).convert_alpha()
-        self.player_surf = pg.transform.scale_by(self.player_surf, 0.3)
-
         self.player_parts = {
             "legs": [],
             "cat_tails": [],
-            "bottoms": [],
             "emo_hair_backs": [],
             "torsos": [],
+            "bottoms": [],
             "tops": [],
             "human_heads": [],
             "cat_heads": [],
@@ -106,7 +100,7 @@ class Game:
 
         # Sprites
         self.sprites = pg.sprite.Group()
-        self.player = Player(self.sprites, self.player_surf, self.player_parts)
+        self.player = Player(self.sprites, self.player_parts)
 
     def run(self):
 

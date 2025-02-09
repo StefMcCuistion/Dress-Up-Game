@@ -30,15 +30,21 @@ class Player(pg.sprite.Sprite):
         self.bottoms = ["shorts"]
         self.tops = ["crop", "coat"]
         self.change_appearance()
-        self.rect = self.image.get_frect(topleft=(0, 0))
+        self.rect = self.image.get_frect(topleft=(settings.W * .53, settings.H * .24))
 
     def change_appearance(self):
         surf = pg.Surface((1766, 2513), pg.SRCALPHA)
 
         skin_index = randint(0, len(self.skin_colors) - 1)
+        hairstyle_index = randint(0, len(self.hairstyles) - 1)
+        hair_color_index = randint(0, len(self.hair_colors) - 1)
+        race_index = randint(0, len(self.races) - 1)
+        tops_idx = randint(0, len(self.tops) - 1)
+        bottoms_idx = randint(0, len(self.bottoms) - 1)
 
         for part in self.parts:
-            surf.blit(self.parts[part][0])
+            surf.blit(self.parts[part][randint(0, len(self.parts[part]) - 1)])
+            
             # if self.race == "cat":
             #     surf.blit(pg.image.load(join("img", f"player_tail_{self.hair_color}.png")))
             # surf.blit(pg.image.load(join("img", f"player_bottom_{self.bottom}.png")))
@@ -52,7 +58,9 @@ class Player(pg.sprite.Sprite):
             # surf.blit(pg.image.load(join("img", f"player_hair_front_{self.hair}_{self.hair_color}.png")))
             # surf = pg.transform.scale_by(surf, 0.3)
         data = pg.image.tobytes(surf, "RGBA")
-        self.image = pg.image.frombytes(data, (1766, 2513), "RGBA")
+        final_surf = pg.image.frombytes(data, (1766, 2513), "RGBA")
+        final_surf = pg.transform.scale_by(final_surf, .6)
+        self.image = final_surf
 
 
 class Game:
@@ -63,7 +71,7 @@ class Game:
         pg.init()
         pg.font.init()
         ctypes.windll.user32.SetProcessDPIAware()  # keeps Windows GUI scale settings from messing with resolution
-        self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
+        self.display = pg.display.set_mode((settings.W, settings.H))
         self.fullscreen = True
         pg.display.set_caption("Dress Up Game")
         if not self.fullscreen:  # These just slow down game launch if done in fullscreen
@@ -93,7 +101,7 @@ class Game:
         for part in self.player_parts.keys():
             for folder_path, sub_folders, file_names in walk(join(asset_location, "img", "parts", part)):
                 if file_names:
-                    for file_name in sorted(file_names, key=lambda name: int(name.split(".")[0])):
+                    for file_name in file_names:
                         path = join(folder_path, file_name)
                         surf = pg.image.load(path).convert_alpha()
                         self.player_parts[part].append(surf)

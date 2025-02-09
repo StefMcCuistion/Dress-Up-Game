@@ -68,18 +68,21 @@ The character will possess the following attributes, which will affect which ver
 These attributes are what will be randomized every time the randomize button is pressed. 
 
 The character is built of multiple different images which are loaded and displayed in a particular order. The order determines which pieces will appear behind others when they overlap. These are the pieces, in order: 
-1. Tail (if cat)
-2. Back hair piece
-3. Body
-4. Socks or tights
-5. Shoes
-6. Bottom clothing piece
-7. Arm
-8. Top clothing piece
-9. Face
-10. Cat ear, back (if cat)
-11. Cat ear, front, behind hair (if cat)
-12. Human ear (if human)
-13. Hair
-14. Cat ear, front, in front of hair (if cat)
+1. Top clothing, back 1
+2. Tail (if cat)
+3. Top clothing, back 2
+4. Hair, back
+5. Body
+6. Socks or tights
+7. Shoes
+8. Bottom clothing
+9. Chest clothing
+10. Arm
+11. Top clothing, front
+12. Face
+13. Cat ear, back (if cat)
+14. Cat ear, front, behind hair (if cat)
+15. Human ear (if human)
+16. Hair, front
+17. Cat ear, front, in front of hair (if cat)
 

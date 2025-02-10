@@ -32,7 +32,7 @@ class Player(pg.sprite.Sprite):
         self.tops = ["none", "jacket", "coat", 'cropped_hoodie']
         self.socks = ["none", "leggings", "thigh_highs"]
         self.change_appearance()
-        self.rect = self.image.get_frect(topleft=(settings.W * .53, settings.H * .24))
+        self.rect = self.image.get_frect(topleft=(settings.W * .5, 0))
 
     def change_appearance(self):
         surf = pg.Surface((1766, 2513), pg.SRCALPHA)
@@ -70,7 +70,7 @@ class Player(pg.sprite.Sprite):
 
         data = pg.image.tobytes(surf, "RGBA")
         final_surf = pg.image.frombytes(data, (1766, 2513), "RGBA")
-        final_surf = pg.transform.scale_by(final_surf, .6)
+        final_surf = pg.transform.scale_by(final_surf, .4)
         self.image = final_surf
 
 
@@ -82,13 +82,14 @@ class Game:
         pg.init()
         pg.font.init()
         ctypes.windll.user32.SetProcessDPIAware()  # keeps Windows GUI scale settings from messing with resolution
+        monitor_size = pg.display.list_modes()[0]
         self.display = pg.display.set_mode((settings.W, settings.H))
-        self.fullscreen = True
+        self.fullscreen = False
         pg.display.set_caption("Dress Up Game")
         if not self.fullscreen:  # These just slow down game launch if done in fullscreen
             os.environ["SDL_VIDEO_CENTERED"] = "1"  # Centers window
-            app = pywinauto.Application().connect(title_re="Dress Up Game")
-            app.top_window().set_focus() # Activates window
+            # app = pywinauto.Application().connect(title_re="Dress Up Game")
+            # app.top_window().set_focus() # Activates window
         self.clock = pg.time.Clock()
         self.running = True
 
@@ -142,7 +143,7 @@ class Game:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     self.player.change_appearance()
             # Render
-            self.display.fill("dark gray")
+            self.display.blit(pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha())
             self.sprites.draw(self.display)
             pg.display.flip()
 

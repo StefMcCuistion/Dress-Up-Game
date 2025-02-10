@@ -1,1 +1,1 @@
-W, H = (5120, 2880)  # Window width and height
+W, H = (1920, 1080)  # Window width and height

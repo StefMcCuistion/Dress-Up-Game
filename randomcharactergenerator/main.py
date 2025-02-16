@@ -88,9 +88,11 @@ class Player(pg.sprite.Sprite):
         self.image = final_surf
 
 class Button(pg.sprite.Sprite):
-    def __init__(self, groups, name, surf, pos, font):
+    def __init__(self, groups, name, surfs, pos, font):
         super().__init__(groups)
-        self.image = surf
+        self.selected = False
+        self.surfs = surfs
+        self.image = self.surfs['unselected']
         self.pos = pos
         self.rect = self.image.get_frect(center = pos)
         self.font = font
@@ -104,10 +106,16 @@ class Button(pg.sprite.Sprite):
         
     def update(self, display):
         if self.check_for_input():
+            self.selected = True
             self.font_color = self.selected_color
         else: 
+            self.selected = False
             self.font_color = self.unselected_color
         self.text = self.font.render(self.name, True, self.font_color)
+        if self.selected:
+            self.image = self.surfs['selected']
+        else:
+            self.image = self.surfs['unselected']
         display.blit(self.text, self.text_rect)
         
             
@@ -152,7 +160,10 @@ class Game:
                     surf = pg.image.load(path).convert_alpha()
                     self.player_parts[file_name.split('.')[0]] = surf
                     
-        self.button_surf = pg.image.load(join('assets', 'img', 'ui', 'button.png')).convert_alpha()
+        self.button_surfs = {
+                             'selected': pg.image.load(join('assets', 'img', 'ui', 'button_selected.png')).convert_alpha(),
+                             'unselected': pg.image.load(join('assets', 'img', 'ui', 'button_unselected.png')).convert_alpha()
+        }
 
         # Sprites
         self.start_sprites = pg.sprite.Group()
@@ -162,9 +173,11 @@ class Game:
     def start(self):
         
         # Sprites
-        start_button = Button(self.start_sprites, 'start', self.button_surf, (settings.W / 2, settings.H / 4), self.font)
-        options_button = Button(self.start_sprites, 'options', self.button_surf, (settings.W / 2, 2 * settings.H / 4), self.font)
-        close_button = Button(self.start_sprites, 'close', self.button_surf, (settings.W / 2, 3 * settings.H / 4), self.font)
+        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1500, 360), self.font)
+        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1500, 590), self.font)
+        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1500, 820), self.font)
+        
+        bg = pg.image.load(join('assets', 'img', 'ui', 'start_background.png')).convert()
 
         # Loop
         while self.running:
@@ -186,7 +199,7 @@ class Game:
                     self.run()
 
             # Render
-            self.display.fill('gray')
+            self.display.blit(bg)
             self.start_sprites.draw(self.display)
             self.start_sprites.update(self.display)
             pg.display.flip()

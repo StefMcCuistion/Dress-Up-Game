@@ -88,8 +88,37 @@ class Player(pg.sprite.Sprite):
         self.image = final_surf
 
 class Button(pg.sprite.Sprite):
-    def __init__(self, groups):
+    def __init__(self, groups, name, surf, pos, font):
         super().__init__(groups)
+        self.image = surf
+        self.pos = pos
+        self.rect = self.image.get_frect(center = pos)
+        self.font = font
+        self.selected_color = '#ffe8f9'
+        self.unselected_color = '#ffb5ed'
+        self.font_color = self.unselected_color
+        self.name = name
+        self.text = self.font.render(self.name, True, self.font_color)
+        self.text_rect = self.text.get_frect(center = (self.rect.center[0], self.rect.center[1] + 22))
+
+        
+    def update(self, display):
+        if self.check_for_input():
+            self.font_color = self.selected_color
+        else: 
+            self.font_color = self.unselected_color
+        self.text = self.font.render(self.name, True, self.font_color)
+        display.blit(self.text, self.text_rect)
+        
+            
+        
+    def check_for_input(self):
+        pos = (pg.mouse.get_pos())
+        if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
+            return 1
+
+
+        
 
 class Game:
 
@@ -102,6 +131,7 @@ class Game:
         monitor_size = pg.display.list_modes()[0]
         self.display = pg.display.set_mode((settings.W, settings.H))
         self.fullscreen = False
+        self.font = pg.font.Font(join('assets', 'motley_forces.ttf'), 80)
         pg.display.set_caption("Dress Up Game")
         if not self.fullscreen:  # These just slow down game launch if done in fullscreen
             os.environ["SDL_VIDEO_CENTERED"] = "1"  # Centers window
@@ -121,11 +151,20 @@ class Game:
                     path = join(folder_path, file_name)
                     surf = pg.image.load(path).convert_alpha()
                     self.player_parts[file_name.split('.')[0]] = surf
+                    
+        self.button_surf = pg.image.load(join('assets', 'img', 'ui', 'button.png')).convert_alpha()
 
         # Sprites
-        self.sprites = pg.sprite.Group()
+        self.start_sprites = pg.sprite.Group()
+        self.play_sprites = pg.sprite.Group()
+        self.options_sprites = pg.sprite.Group()
 
     def start(self):
+        
+        # Sprites
+        start_button = Button(self.start_sprites, 'start', self.button_surf, (settings.W / 2, settings.H / 4), self.font)
+        options_button = Button(self.start_sprites, 'options', self.button_surf, (settings.W / 2, 2 * settings.H / 4), self.font)
+        close_button = Button(self.start_sprites, 'close', self.button_surf, (settings.W / 2, 3 * settings.H / 4), self.font)
 
         # Loop
         while self.running:
@@ -148,14 +187,15 @@ class Game:
 
             # Render
             self.display.fill('gray')
-            self.sprites.draw(self.display)
+            self.start_sprites.draw(self.display)
+            self.start_sprites.update(self.display)
             pg.display.flip()
 
 
     def run(self):
 
         # Sprites
-        self.player = Player(self.sprites, self.player_parts)
+        self.player = Player(self.play_sprites, self.player_parts)
         bg = pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha()
 
         # Loop
@@ -178,7 +218,7 @@ class Game:
                     self.player.change_appearance()
             # Render
             self.display.blit(bg)
-            self.sprites.draw(self.display)
+            self.play_sprites.draw(self.display)
             pg.display.flip()
 
         pg.quit()

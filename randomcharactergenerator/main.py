@@ -47,26 +47,26 @@ class Player(pg.sprite.Sprite):
         chests_idx = randint(0, len(self.chests) - 1)
 
         if self.tops[tops_idx] != 'none': 
-            surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'top_{self.tops[tops_idx]}_back1.png')).convert_alpha())
+            surf.blit(self.parts[f'top_{self.tops[tops_idx]}_back1'])
         if self.races[races_idx] == "cat":
-            surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'tail_cat_{self.hair_colors[hair_colors_idx]}.png')).convert_alpha())
+            surf.blit(self.parts[f'tail_cat_{self.hair_colors[hair_colors_idx]}'])
         if self.tops[tops_idx] != 'none': 
-            surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'top_{self.tops[tops_idx]}_back2.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'hair_{self.hairstyles[hairstyles_idx]}_{self.hair_colors[hair_colors_idx]}_back.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'body_{self.skin_colors[skin_colors_idx]}.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'socks_{self.socks[socks_idx]}.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'bottom_{self.bottoms[bottoms_idx]}.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'chest_{self.chests[chests_idx]}.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'arm_{self.skin_colors[skin_colors_idx]}.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'top_{self.tops[tops_idx]}_front.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'face_purple.png')).convert_alpha())
+            surf.blit(self.parts[f'top_{self.tops[tops_idx]}_back2'])
+        surf.blit(self.parts[f'hair_{self.hairstyles[hairstyles_idx]}_{self.hair_colors[hair_colors_idx]}_back'])
+        surf.blit(self.parts[f'body_{self.skin_colors[skin_colors_idx]}'])
+        surf.blit(self.parts[f'socks_{self.socks[socks_idx]}'])
+        surf.blit(self.parts[f'bottom_{self.bottoms[bottoms_idx]}'])
+        surf.blit(self.parts[f'chest_{self.chests[chests_idx]}'])
+        surf.blit(self.parts[f'arm_{self.skin_colors[skin_colors_idx]}'])
+        surf.blit(self.parts[f'top_{self.tops[tops_idx]}_front'])
+        surf.blit(self.parts[f'face_purple'])
         if self.races[races_idx] == "cat":
-            surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'catear_back_{self.hair_colors[hair_colors_idx]}.png')).convert_alpha())
+            surf.blit(self.parts[f'catear_back_{self.hair_colors[hair_colors_idx]}'])
         else: 
-            surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'humanear_{self.skin_colors[skin_colors_idx]}.png')).convert_alpha())
-        surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'hair_{self.hairstyles[hairstyles_idx]}_{self.hair_colors[hair_colors_idx]}_front.png')).convert_alpha())
+            surf.blit(self.parts[f'humanear_{self.skin_colors[skin_colors_idx]}'])
+        surf.blit(self.parts[f'hair_{self.hairstyles[hairstyles_idx]}_{self.hair_colors[hair_colors_idx]}_front'])
         if self.races[races_idx] == "cat":
-            surf.blit(pg.image.load(join('assets', 'img', 'player_pieces', f'catear_front_{self.hair_colors[hair_colors_idx]}.png')).convert_alpha())
+            surf.blit(self.parts[f'catear_front_{self.hair_colors[hair_colors_idx]}'])
 
         data = pg.image.tobytes(surf, "RGBA")
         final_surf = pg.image.frombytes(data, (1766, 2513), "RGBA")
@@ -97,26 +97,13 @@ class Game:
         asset_location = os.path.join(current_dir, "assets")
 
         # Imports
-        self.player_parts = {
-            "legs": [],
-            "cat_tails": [],
-            "emo_hair_backs": [],
-            "torsos": [],
-            "bottoms": [],
-            "tops": [],
-            "human_heads": [],
-            "cat_heads": [],
-            "cat_ears": [],
-            "faces": [],
-            "emo_hair_fronts": [],
-        }
-        for part in self.player_parts.keys():
-            for folder_path, sub_folders, file_names in walk(join(asset_location, "img", "parts", part)):
-                if file_names:
-                    for file_name in file_names:
-                        path = join(folder_path, file_name)
-                        surf = pg.image.load(path).convert_alpha()
-                        self.player_parts[part].append(surf)
+        self.player_parts = {}
+        for folder_path, sub_folders, file_names in walk(join(asset_location, "img", "player_pieces")):
+            if file_names:
+                for file_name in file_names:
+                    path = join(folder_path, file_name)
+                    surf = pg.image.load(path).convert_alpha()
+                    self.player_parts[file_name.split('.')[0]] = surf
 
         # Sprites
         self.sprites = pg.sprite.Group()

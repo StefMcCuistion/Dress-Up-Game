@@ -87,6 +87,9 @@ class Player(pg.sprite.Sprite):
         final_surf = pg.transform.scale_by(final_surf, .4)
         self.image = final_surf
 
+class Button(pg.sprite.Sprite):
+    def __init__(self, groups):
+        super().__init__(groups)
 
 class Game:
 
@@ -121,7 +124,6 @@ class Game:
 
         # Sprites
         self.sprites = pg.sprite.Group()
-        self.player = Player(self.sprites, self.player_parts)
 
     def start(self):
 
@@ -142,15 +144,18 @@ class Game:
                         else:
                             self.display = pg.display.set_mode((settings.W, settings.H))
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    self.player.change_appearance()
+                    self.run()
+
             # Render
-            self.display.blit(pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha())
+            self.display.fill('gray')
             self.sprites.draw(self.display)
             pg.display.flip()
 
 
     def run(self):
 
+        # Sprites
+        self.player = Player(self.sprites, self.player_parts)
         bg = pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha()
 
         # Loop
@@ -182,4 +187,4 @@ class Game:
 
 if __name__ == "__main__":
     game = Game()
-    game.run()
+    game.start()

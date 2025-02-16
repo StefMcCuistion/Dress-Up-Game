@@ -33,40 +33,54 @@ class Player(pg.sprite.Sprite):
         self.socks = ["none", "leggings", "thigh_highs"]
         self.change_appearance()
         self.rect = self.image.get_frect(topleft=(settings.W * .5, 0))
+        
+        # Index Defaults
+        self.skin_colors_idx = 0
+        self.hairstyles_idx = 0
+        self.hair_colors_idx = 0
+        self.races_idx = 0
+        self.tops_idx = 0
+        self.bottoms_idx = 0
+        self.socks_idx = 0
+        self.chests_idx = 0
+
+        
+    def randomize_attributes(self):
+        self.skin_colors_idx = randint(0, len(self.skin_colors) - 1)
+        self.hairstyles_idx = randint(0, len(self.hairstyles) - 1)
+        self.hair_colors_idx = randint(0, len(self.hair_colors) - 1)
+        self.races_idx = randint(0, len(self.races) - 1)
+        self.tops_idx = randint(0, len(self.tops) - 1)
+        self.bottoms_idx = randint(0, len(self.bottoms) - 1)
+        self.socks_idx = randint(0, len(self.socks) - 1)
+        self.chests_idx = randint(0, len(self.chests) - 1)
 
     def change_appearance(self):
         surf = pg.Surface((1766, 2513), pg.SRCALPHA)
 
-        skin_colors_idx = randint(0, len(self.skin_colors) - 1)
-        hairstyles_idx = randint(0, len(self.hairstyles) - 1)
-        hair_colors_idx = randint(0, len(self.hair_colors) - 1)
-        races_idx = randint(0, len(self.races) - 1)
-        tops_idx = randint(0, len(self.tops) - 1)
-        bottoms_idx = randint(0, len(self.bottoms) - 1)
-        socks_idx = randint(0, len(self.socks) - 1)
-        chests_idx = randint(0, len(self.chests) - 1)
+        self.randomize_attributes()
 
-        if self.tops[tops_idx] != 'none': 
-            surf.blit(self.parts[f'top_{self.tops[tops_idx]}_back1'])
-        if self.races[races_idx] == "cat":
-            surf.blit(self.parts[f'tail_cat_{self.hair_colors[hair_colors_idx]}'])
-        if self.tops[tops_idx] != 'none': 
-            surf.blit(self.parts[f'top_{self.tops[tops_idx]}_back2'])
-        surf.blit(self.parts[f'hair_{self.hairstyles[hairstyles_idx]}_{self.hair_colors[hair_colors_idx]}_back'])
-        surf.blit(self.parts[f'body_{self.skin_colors[skin_colors_idx]}'])
-        surf.blit(self.parts[f'socks_{self.socks[socks_idx]}'])
-        surf.blit(self.parts[f'bottom_{self.bottoms[bottoms_idx]}'])
-        surf.blit(self.parts[f'chest_{self.chests[chests_idx]}'])
-        surf.blit(self.parts[f'arm_{self.skin_colors[skin_colors_idx]}'])
-        surf.blit(self.parts[f'top_{self.tops[tops_idx]}_front'])
+        if self.tops[self.tops_idx] != 'none': 
+            surf.blit(self.parts[f'top_{self.tops[self.tops_idx]}_back1'])
+        if self.races[self.races_idx] == "cat":
+            surf.blit(self.parts[f'tail_cat_{self.hair_colors[self.hair_colors_idx]}'])
+        if self.tops[self.tops_idx] != 'none': 
+            surf.blit(self.parts[f'top_{self.tops[self.tops_idx]}_back2'])
+        surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_back'])
+        surf.blit(self.parts[f'body_{self.skin_colors[self.skin_colors_idx]}'])
+        surf.blit(self.parts[f'socks_{self.socks[self.socks_idx]}'])
+        surf.blit(self.parts[f'bottom_{self.bottoms[self.bottoms_idx]}'])
+        surf.blit(self.parts[f'chest_{self.chests[self.chests_idx]}'])
+        surf.blit(self.parts[f'arm_{self.skin_colors[self.skin_colors_idx]}'])
+        surf.blit(self.parts[f'top_{self.tops[self.tops_idx]}_front'])
         surf.blit(self.parts[f'face_purple'])
-        if self.races[races_idx] == "cat":
-            surf.blit(self.parts[f'catear_back_{self.hair_colors[hair_colors_idx]}'])
+        if self.races[self.races_idx] == "cat":
+            surf.blit(self.parts[f'catear_back_{self.hair_colors[self.hair_colors_idx]}'])
         else: 
-            surf.blit(self.parts[f'humanear_{self.skin_colors[skin_colors_idx]}'])
-        surf.blit(self.parts[f'hair_{self.hairstyles[hairstyles_idx]}_{self.hair_colors[hair_colors_idx]}_front'])
-        if self.races[races_idx] == "cat":
-            surf.blit(self.parts[f'catear_front_{self.hair_colors[hair_colors_idx]}'])
+            surf.blit(self.parts[f'humanear_{self.skin_colors[self.skin_colors_idx]}'])
+        surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_front'])
+        if self.races[self.races_idx] == "cat":
+            surf.blit(self.parts[f'catear_front_{self.hair_colors[self.hair_colors_idx]}'])
 
         data = pg.image.tobytes(surf, "RGBA")
         final_surf = pg.image.frombytes(data, (1766, 2513), "RGBA")

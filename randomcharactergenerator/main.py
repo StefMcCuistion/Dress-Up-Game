@@ -122,7 +122,7 @@ class Game:
         self.sprites = pg.sprite.Group()
         self.player = Player(self.sprites, self.player_parts)
 
-    def run(self):
+    def start(self):
 
         # Loop
         while self.running:
@@ -144,6 +144,34 @@ class Game:
                     self.player.change_appearance()
             # Render
             self.display.blit(pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha())
+            self.sprites.draw(self.display)
+            pg.display.flip()
+
+
+    def run(self):
+
+        bg = pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha()
+
+        # Loop
+        while self.running:
+            self.dt = self.clock.tick() / 1000
+            # Event loop
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.running = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        self.running = False
+                    if event.key == pg.K_f:
+                        self.fullscreen = not self.fullscreen
+                        if self.fullscreen:
+                            self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
+                        else:
+                            self.display = pg.display.set_mode((settings.W, settings.H))
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    self.player.change_appearance()
+            # Render
+            self.display.blit(bg)
             self.sprites.draw(self.display)
             pg.display.flip()
 

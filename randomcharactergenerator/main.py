@@ -94,7 +94,7 @@ class Button(pg.sprite.Sprite):
         self.surfs = surfs
         self.image = self.surfs['unselected']
         self.pos = pos
-        self.rect = self.image.get_frect(center = pos)
+        self.rect = self.image.get_frect(center = self.pos)
         self.font = font
         self.selected_color = '#ffe8f9'
         self.unselected_color = '#ffb5ed'
@@ -114,8 +114,10 @@ class Button(pg.sprite.Sprite):
         self.text = self.font.render(self.name, True, self.font_color)
         if self.selected:
             self.image = self.surfs['selected']
+            self.rect = self.image.get_frect(center = self.pos)
         else:
             self.image = self.surfs['unselected']
+            self.rect = self.image.get_frect(center = self.pos)
         display.blit(self.text, self.text_rect)
         
             
@@ -196,7 +198,12 @@ class Game:
                         else:
                             self.display = pg.display.set_mode((settings.W, settings.H))
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    self.run()
+                    if start_button.check_for_input():
+                        self.run()
+                    elif options_button.check_for_input():
+                        print('options')
+                    elif close_button.check_for_input():
+                        self.running = False
 
             # Render
             self.display.blit(bg)

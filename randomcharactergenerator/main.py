@@ -199,9 +199,9 @@ class Game:
                             self.display = pg.display.set_mode((settings.W, settings.H))
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if start_button.check_for_input():
-                        self.run()
+                        self.play()
                     elif options_button.check_for_input():
-                        print('options')
+                        self.options()
                     elif close_button.check_for_input():
                         self.running = False
 
@@ -211,8 +211,10 @@ class Game:
             self.start_sprites.update(self.display)
             pg.display.flip()
 
+    def options(self):
+        print('options')
 
-    def run(self):
+    def play(self):
 
         # Sprites
         self.player = Player(self.play_sprites, self.player_parts)

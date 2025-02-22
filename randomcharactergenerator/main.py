@@ -103,11 +103,8 @@ class Heart(pg.sprite.Sprite):
     def update(self, dt):
         self.rect.center += self.dir * self.speed * dt
         current_time = pg.time.get_ticks()
-        # if self.lifespan < current_time - self.creation_time:
-        #     self.kill()
         if self.rect.top > settings.H or self.rect.left > settings.W or self.rect.right < 0:
             self.kill()
-            print('kill')
 
         # Rotation
         self.rotation += self.roto_speed * dt
@@ -215,7 +212,7 @@ class Game:
         # Custom heart event
         self.background_hearts = pg.sprite.Group()
         heart_event = pg.event.custom_type()
-        pg.time.set_timer(heart_event, 500)
+        pg.time.set_timer(heart_event, 1000)
 
         # Loop
         while self.running:

@@ -25,15 +25,15 @@ class Player(pg.sprite.Sprite):
         self.parts = parts
         self.skin_colors = ["fair", "pale_brown"]
         self.races = ["human", "cat"]
-        self.hairstyles = ["emo"]
-        self.hair_colors = ["black", "blonde", "brown"]
+        self.hairstyles = ["emo", "bunched"]
+        self.hair_colors = ["black", "blonde", "brown", "purple"]
         self.bottoms = ["shorts", "skirt"]
         self.chests = ["cropped_shirt", "bra"]
         self.tops = ["none", "anime_jacket", "jacket", "coat", 'cropped_hoodie']
         self.socks = ["none", "leggings", "thigh_highs"]
         self.change_appearance()
         self.rect = self.image.get_frect(topleft=(settings.W * .5, settings.H * -.045))
-        
+
         # Index Defaults
         self.skin_colors_idx = 0
         self.hairstyles_idx = 0
@@ -44,7 +44,7 @@ class Player(pg.sprite.Sprite):
         self.socks_idx = 0
         self.chests_idx = 0
 
-        
+
     def randomize_attributes(self):
         self.skin_colors_idx = randint(0, len(self.skin_colors) - 1)
         self.hairstyles_idx = randint(0, len(self.hairstyles) - 1)
@@ -60,13 +60,13 @@ class Player(pg.sprite.Sprite):
 
         self.randomize_attributes()
 
-        if self.tops[self.tops_idx] != 'none': 
+        if self.tops[self.tops_idx] != 'none':
             surf.blit(self.parts[f'top_{self.tops[self.tops_idx]}_back1'])
+        surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_back'])
         if self.races[self.races_idx] == "cat":
             surf.blit(self.parts[f'tail_cat_{self.hair_colors[self.hair_colors_idx]}'])
-        if self.tops[self.tops_idx] != 'none': 
+        if self.tops[self.tops_idx] != 'none':
             surf.blit(self.parts[f'top_{self.tops[self.tops_idx]}_back2'])
-        surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_back'])
         surf.blit(self.parts[f'body_{self.skin_colors[self.skin_colors_idx]}'])
         surf.blit(self.parts[f'socks_{self.socks[self.socks_idx]}'])
         surf.blit(self.parts[f'bottom_{self.bottoms[self.bottoms_idx]}'])
@@ -76,7 +76,7 @@ class Player(pg.sprite.Sprite):
         surf.blit(self.parts[f'face_purple'])
         if self.races[self.races_idx] == "cat":
             surf.blit(self.parts[f'catear_back_{self.hair_colors[self.hair_colors_idx]}'])
-        else: 
+        else:
             surf.blit(self.parts[f'humanear_{self.skin_colors[self.skin_colors_idx]}'])
         surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_front'])
         if self.races[self.races_idx] == "cat":
@@ -127,12 +127,12 @@ class Button(pg.sprite.Sprite):
         self.text = self.font.render(self.name, True, self.font_color)
         self.text_rect = self.text.get_frect(center = (self.rect.center[0], self.rect.center[1] + 22))
 
-        
+
     def update(self, display):
         if self.check_for_input():
             self.selected = True
             self.font_color = self.selected_color
-        else: 
+        else:
             self.selected = False
             self.font_color = self.unselected_color
         self.text = self.font.render(self.name, True, self.font_color)
@@ -143,16 +143,16 @@ class Button(pg.sprite.Sprite):
             self.image = self.surfs['unselected']
             self.rect = self.image.get_frect(center = self.pos)
         display.blit(self.text, self.text_rect)
-        
-            
-        
+
+
+
     def check_for_input(self):
         pos = (pg.mouse.get_pos())
         if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
             return 1
 
 
-        
+
 
 class Game:
 
@@ -181,8 +181,8 @@ class Game:
         cursor_surf = pg.image.load(join(asset_location, 'img', 'ui', 'mouse.png')).convert_alpha()
         cursor = pg.cursors.Cursor((0,0), cursor_surf)
         pg.mouse.set_cursor(cursor)
-        
-        
+
+
         self.player_parts = {}
         for folder_path, sub_folders, file_names in walk(join(asset_location, "img", "player_pieces")):
             if file_names:
@@ -190,12 +190,12 @@ class Game:
                     path = join(folder_path, file_name)
                     surf = pg.image.load(path).convert_alpha()
                     self.player_parts[file_name.split('.')[0]] = surf
-                    
+
         self.button_surfs = {
                              'selected': pg.image.load(join('assets', 'img', 'ui', 'button_selected.png')).convert_alpha(),
                              'unselected': pg.image.load(join('assets', 'img', 'ui', 'button_unselected.png')).convert_alpha()
         }
-        
+
         self.heart_surf = pg.image.load(join(asset_location, 'img', 'ui', 'heart.png')).convert_alpha()
 
         # Sprite groups
@@ -204,16 +204,16 @@ class Game:
         self.options_sprites = pg.sprite.Group()
 
     def start(self):
-        
+
         self.display.fill('black')
-        
+
         # Sprites
         start_button = Button(self.start_sprites, 'start', self.button_surfs, (1495, 345), self.font)
         options_button = Button(self.start_sprites, 'options', self.button_surfs, (1495, 575), self.font)
         close_button = Button(self.start_sprites, 'close', self.button_surfs, (1495, 805), self.font)
-        
+
         menu_box = pg.image.load(join('assets', 'img', 'ui', 'start_menu_box.png')).convert_alpha()
-        
+
         # Custom heart event
         self.background_hearts = pg.sprite.Group()
         heart_event = pg.event.custom_type()
@@ -261,7 +261,7 @@ class Game:
         print('options')
 
     def play(self):
-        
+
         self.display.fill('black')
 
         # Sprites

@@ -29,7 +29,7 @@ class Player(pg.sprite.Sprite):
         self.hair_colors = ["black", "blonde", "brown"]
         self.bottoms = ["shorts", "skirt"]
         self.chests = ["cropped_shirt", "bra"]
-        self.tops = ["anime_jacket", "jacket", "coat", 'cropped_hoodie']
+        self.tops = ["none", "anime_jacket", "jacket", "coat", 'cropped_hoodie']
         self.socks = ["none", "leggings", "thigh_highs"]
         self.change_appearance()
         self.rect = self.image.get_frect(topleft=(settings.W * .5, 0))

@@ -1,5 +1,5 @@
 import io
-from random import randint
+from random import randint, uniform
 import pygame as pg
 
 # from pygame import mixer
@@ -87,6 +87,33 @@ class Player(pg.sprite.Sprite):
         final_surf = pg.transform.scale_by(final_surf, .4)
         self.image = final_surf
 
+class Heart(pg.sprite.Sprite):
+    def __init__(self, surf, pos, groups):
+        super().__init__(groups)
+        self.og_surf = surf
+        self.image = self.og_surf
+        self.rect = self.image.get_frect(center = pos)
+        self.creation_time = pg.time.get_ticks()
+        self.lifespan = 4500
+        self.dir = pg.math.Vector2(uniform(-0.5, 0.5), 1)
+        self.speed = randint(400, 500)
+        self.rotation = randint(0, 360)
+        self.roto_speed = randint(20, 40)
+
+    def update(self, dt):
+        self.rect.center += self.dir * self.speed * dt
+        current_time = pg.time.get_ticks()
+        # if self.lifespan < current_time - self.creation_time:
+        #     self.kill()
+        if self.rect.top > settings.H or self.rect.left > settings.W or self.rect.right < 0:
+            self.kill()
+            print('kill')
+
+        # Rotation
+        self.rotation += self.roto_speed * dt
+        self.image = pg.transform.rotozoom(self.og_surf, self.rotation, 1)
+        self.rect = self.image.get_frect(center = self.rect.center)
+
 class Button(pg.sprite.Sprite):
     def __init__(self, groups, name, surfs, pos, font):
         super().__init__(groups)
@@ -166,20 +193,29 @@ class Game:
                              'selected': pg.image.load(join('assets', 'img', 'ui', 'button_selected.png')).convert_alpha(),
                              'unselected': pg.image.load(join('assets', 'img', 'ui', 'button_unselected.png')).convert_alpha()
         }
+        
+        self.heart_surf = pg.image.load(join(asset_location, 'img', 'ui', 'heart.png')).convert_alpha()
 
-        # Sprites
+        # Sprite groups
         self.start_sprites = pg.sprite.Group()
         self.play_sprites = pg.sprite.Group()
         self.options_sprites = pg.sprite.Group()
 
     def start(self):
         
+        self.display.fill('black')
+        
         # Sprites
         start_button = Button(self.start_sprites, 'start', self.button_surfs, (1500, 360), self.font)
         options_button = Button(self.start_sprites, 'options', self.button_surfs, (1500, 590), self.font)
         close_button = Button(self.start_sprites, 'close', self.button_surfs, (1500, 820), self.font)
         
-        bg = pg.image.load(join('assets', 'img', 'ui', 'start_background.png')).convert()
+        menu_box = pg.image.load(join('assets', 'img', 'ui', 'start_menu_box.png')).convert_alpha()
+        
+        # Custom heart event
+        self.background_hearts = pg.sprite.Group()
+        heart_event = pg.event.custom_type()
+        pg.time.set_timer(heart_event, 500)
 
         # Loop
         while self.running:
@@ -188,6 +224,9 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.running = False
+                if event.type == heart_event:
+                    x, y = randint(0, settings.W), randint(-600, -400)
+                    Heart(self.heart_surf, (x, y), self.background_hearts)
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         self.running = False
@@ -199,6 +238,8 @@ class Game:
                             self.display = pg.display.set_mode((settings.W, settings.H))
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if start_button.check_for_input():
+                        for sprite in self.start_sprites:
+                            sprite.kill()
                         self.play()
                     elif options_button.check_for_input():
                         self.options()
@@ -206,7 +247,10 @@ class Game:
                         self.running = False
 
             # Render
-            self.display.blit(bg)
+            self.display.fill('#ffe3f8')
+            self.background_hearts.update(self.dt)
+            self.background_hearts.draw(self.display)
+            self.display.blit(menu_box)
             self.start_sprites.draw(self.display)
             self.start_sprites.update(self.display)
             pg.display.flip()
@@ -215,6 +259,8 @@ class Game:
         print('options')
 
     def play(self):
+        
+        self.display.fill('black')
 
         # Sprites
         self.player = Player(self.play_sprites, self.player_parts)
@@ -236,6 +282,10 @@ class Game:
                             self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
                         else:
                             self.display = pg.display.set_mode((settings.W, settings.H))
+                    if event.key == pg.K_s:
+                        for sprite in self.play_sprites:
+                            sprite.kill()
+                        self.start()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     self.player.change_appearance()
             # Render

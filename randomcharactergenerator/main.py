@@ -32,7 +32,7 @@ class Player(pg.sprite.Sprite):
         self.tops = ["none", "anime_jacket", "jacket", "coat", 'cropped_hoodie']
         self.socks = ["none", "leggings", "thigh_highs"]
         self.change_appearance()
-        self.rect = self.image.get_frect(topleft=(settings.W * .5, 0))
+        self.rect = self.image.get_frect(topleft=(settings.W * .5, settings.H * -.045))
         
         # Index Defaults
         self.skin_colors_idx = 0
@@ -84,7 +84,7 @@ class Player(pg.sprite.Sprite):
 
         data = pg.image.tobytes(surf, "RGBA")
         final_surf = pg.image.frombytes(data, (1766, 2513), "RGBA")
-        final_surf = pg.transform.scale_by(final_surf, .4)
+        final_surf = pg.transform.scale_by(final_surf, .46)
         self.image = final_surf
 
 class Heart(pg.sprite.Sprite):
@@ -208,9 +208,9 @@ class Game:
         self.display.fill('black')
         
         # Sprites
-        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1500, 340), self.font)
-        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1500, 570), self.font)
-        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1500, 800), self.font)
+        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1495, 345), self.font)
+        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1495, 575), self.font)
+        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1495, 805), self.font)
         
         menu_box = pg.image.load(join('assets', 'img', 'ui', 'start_menu_box.png')).convert_alpha()
         

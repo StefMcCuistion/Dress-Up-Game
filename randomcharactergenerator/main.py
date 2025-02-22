@@ -178,6 +178,11 @@ class Game:
         asset_location = os.path.join(current_dir, "assets")
 
         # Imports
+        cursor_surf = pg.image.load(join(asset_location, 'img', 'ui', 'mouse.png')).convert_alpha()
+        cursor = pg.cursors.Cursor((0,0), cursor_surf)
+        pg.mouse.set_cursor(cursor)
+        
+        
         self.player_parts = {}
         for folder_path, sub_folders, file_names in walk(join(asset_location, "img", "player_pieces")):
             if file_names:
@@ -203,9 +208,9 @@ class Game:
         self.display.fill('black')
         
         # Sprites
-        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1500, 360), self.font)
-        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1500, 590), self.font)
-        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1500, 820), self.font)
+        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1500, 340), self.font)
+        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1500, 570), self.font)
+        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1500, 800), self.font)
         
         menu_box = pg.image.load(join('assets', 'img', 'ui', 'start_menu_box.png')).convert_alpha()
         

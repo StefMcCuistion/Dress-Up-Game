@@ -94,7 +94,6 @@ class Heart(pg.sprite.Sprite):
         self.image = self.og_surf
         self.rect = self.image.get_frect(center = pos)
         self.creation_time = pg.time.get_ticks()
-        self.lifespan = 4500
         self.dir = pg.math.Vector2(uniform(-0.5, 0.5), 1)
         self.speed = randint(400, 500)
         self.rotation = randint(0, 360)
@@ -218,6 +217,10 @@ class Game:
         self.background_hearts = pg.sprite.Group()
         heart_event = pg.event.custom_type()
         pg.time.set_timer(heart_event, 1000)
+        
+        for i in range(0, 2):
+            x, y = randint(265, settings.W - 265), 0
+            Heart(self.heart_surf, (x, y), self.background_hearts)
 
         # Loop
         while self.running:
@@ -227,7 +230,7 @@ class Game:
                 if event.type == pg.QUIT:
                     self.running = False
                 if event.type == heart_event:
-                    x, y = randint(0, settings.W), randint(-600, -400)
+                    x, y = randint(0, settings.W), randint(-300, -221)
                     Heart(self.heart_surf, (x, y), self.background_hearts)
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
@@ -300,5 +303,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game()
+    game = Game()    
     game.start()

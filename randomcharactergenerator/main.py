@@ -25,24 +25,26 @@ class Player(pg.sprite.Sprite):
         self.parts = parts
         self.skin_colors = ["fair", "pale_brown"]
         self.races = ["human", "cat"]
-        self.hairstyles = ["emo", "bubble_braid"]
+        self.hairstyles = ["bald", "emo", "bubble_braid"]
         self.hair_colors = ["black", "blonde", "brown", "purple"]
         self.bottoms = ["shorts", "skirt"]
         self.chests = ["cropped_shirt", "bra"]
         self.tops = ["none", "anime_jacket", "jacket", "coat", 'cropped_hoodie']
-        self.socks = ["none", "leggings", "thigh_highs"]
-        self.change_appearance()
-        self.rect = self.image.get_frect(topleft=(settings.W * .5, settings.H * -.045))
-
-        # Index Defaults
+        self.socks = ["none", "leggings", "thigh_highs_black", "thigh_highs_cream"]
+        
+        # Index Defaults, used when not randomized
         self.skin_colors_idx = 0
-        self.hairstyles_idx = 0
+        self.hairstyles_idx = 1
         self.hair_colors_idx = 0
         self.races_idx = 0
         self.tops_idx = 0
         self.bottoms_idx = 0
         self.socks_idx = 0
         self.chests_idx = 0
+        
+        self.change_appearance()
+        self.rect = self.image.get_frect(topleft=(settings.W * .5, settings.H * -.045))
+
 
 
     def randomize_attributes(self):
@@ -56,13 +58,15 @@ class Player(pg.sprite.Sprite):
         self.chests_idx = randint(0, len(self.chests) - 1)
 
     def change_appearance(self):
-        surf = pg.Surface((1766, 2513), pg.SRCALPHA)
 
         self.randomize_attributes()
 
+        # Draws character and updates self.image
+        surf = pg.Surface((1766, 2513), pg.SRCALPHA)
         if self.tops[self.tops_idx] != 'none':
             surf.blit(self.parts[f'top_{self.tops[self.tops_idx]}_back1'])
-        surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_back'])
+        if self.hairstyles[self.hairstyles_idx] != 'bald':
+            surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_back'])
         if self.races[self.races_idx] == "cat":
             surf.blit(self.parts[f'tail_cat_{self.hair_colors[self.hair_colors_idx]}'])
         if self.tops[self.tops_idx] != 'none':
@@ -76,9 +80,11 @@ class Player(pg.sprite.Sprite):
         surf.blit(self.parts[f'face_purple'])
         if self.races[self.races_idx] == "cat":
             surf.blit(self.parts[f'catear_back_{self.hair_colors[self.hair_colors_idx]}'])
+            surf.blit(self.parts[f'catear_under_hair_{self.hair_colors[self.hair_colors_idx]}'])
         else:
             surf.blit(self.parts[f'humanear_{self.skin_colors[self.skin_colors_idx]}'])
-        surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_front'])
+        if self.hairstyles[self.hairstyles_idx] != 'bald':
+            surf.blit(self.parts[f'hair_{self.hairstyles[self.hairstyles_idx]}_{self.hair_colors[self.hair_colors_idx]}_front'])
         if self.races[self.races_idx] == "cat":
             surf.blit(self.parts[f'catear_front_{self.hair_colors[self.hair_colors_idx]}'])
 

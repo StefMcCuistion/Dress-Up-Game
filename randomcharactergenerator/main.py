@@ -25,7 +25,7 @@ class Player(pg.sprite.Sprite):
         self.parts = parts
         self.skin_colors = ["fair", "pale_brown"]
         self.races = ["human", "cat"]
-        self.hairstyles = ["emo", "bunched"]
+        self.hairstyles = ["emo", "bubble_braid"]
         self.hair_colors = ["black", "blonde", "brown", "purple"]
         self.bottoms = ["shorts", "skirt"]
         self.chests = ["cropped_shirt", "bra"]

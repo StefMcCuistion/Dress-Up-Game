@@ -4,7 +4,7 @@ import pygame as pg
 
 import json
 
-# from pygame import mixer
+from pygame import mixer
 from os.path import join
 import os
 from os import walk
@@ -252,6 +252,7 @@ class Game:
         # Setup
         pg.init()
         pg.font.init()
+        pg.mixer.init()
         
         self.user_settings = {
                               "Fullscreen": False,
@@ -269,8 +270,11 @@ class Game:
         
         ctypes.windll.user32.SetProcessDPIAware()  # keeps Windows GUI scale settings from messing with resolution
         monitor_size = pg.display.list_modes()[0]
-        self.display = pg.display.set_mode((settings.W, settings.H))
-        self.fullscreen = False
+        self.fullscreen = self.user_settings['Fullscreen']
+        if self.fullscreen:
+            self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
+        else:
+            self.display = pg.display.set_mode((settings.W, settings.H))
         self.font = pg.font.Font(join('assets', 'motley_forces.ttf'), 90)
         pg.display.set_caption("Dress Up Game")
         if not self.fullscreen:  # These just slow down game launch if done in fullscreen
@@ -322,12 +326,23 @@ class Game:
         
         # Imports: Background Hearts
         self.heart_surf = pg.image.load(join(asset_location, 'img', 'ui', 'heart.png')).convert_alpha()
+        
+        # Imports: Audio
+        
+        pg.mixer.music.load(join('assets', 'audio', '90s_Bodybuilding_Music_by_Aries_Beats.mp3'))
 
         # Sprite groups
         self.start_sprites = pg.sprite.Group()
         self.play_sprites = pg.sprite.Group()
         self.about_sprites = pg.sprite.Group()
         self.options_sprites = pg.sprite.Group()
+        
+        # Play music
+        
+        music_volume = (self.user_settings['Master Volume'] / 100) * (self.user_settings['Music Volume'] / 100)
+        pg.mixer.music.set_volume(music_volume)
+        pg.mixer.music.play(loops = -1)
+        
 
     def start(self):
 
@@ -363,12 +378,6 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         self.running = False
-                    if event.key == pg.K_f:
-                        self.fullscreen = not self.fullscreen
-                        if self.fullscreen:
-                            self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
-                        else:
-                            self.display = pg.display.set_mode((settings.W, settings.H))
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if start_button.check_for_input():
                         for sprite in self.start_sprites:
@@ -423,12 +432,21 @@ class Game:
                         for sprite in self.options_sprites:
                             sprite.kill()
                         self.start()
+                if event.type == pg.MOUSEBUTTONUP:
+                        self.fullscreen = self.user_settings['Fullscreen']
+                        if self.fullscreen:
+                            self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
+                        else:
+                            self.display = pg.display.set_mode((settings.W, settings.H))
+
             
             # Update User Settings
             self.user_settings['Fullscreen'] = fullscreen_checkbox.give_state()
             self.user_settings['Master Volume'] = master_volume_slider.give_idx()
             self.user_settings['Music Volume'] = music_volume_slider.give_idx()
             self.user_settings['SFX Volume'] = sfx_volume_slider.give_idx()
+            music_volume = (self.user_settings['Master Volume'] / 100) * (self.user_settings['Music Volume'] / 100)
+            pg.mixer.music.set_volume(music_volume)
             print(self.user_settings)
 
 
@@ -458,12 +476,6 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         self.running = False
-                    if event.key == pg.K_f:
-                        self.fullscreen = not self.fullscreen
-                        if self.fullscreen:
-                            self.display = pg.display.set_mode((settings.W, settings.H), pg.FULLSCREEN)
-                        else:
-                            self.display = pg.display.set_mode((settings.W, settings.H))
                     if event.key == pg.K_s:
                         for sprite in self.play_sprites:
                             sprite.kill()

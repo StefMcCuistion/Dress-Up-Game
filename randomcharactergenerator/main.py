@@ -117,7 +117,7 @@ class Heart(pg.sprite.Sprite):
         self.rect = self.image.get_frect(center = self.rect.center)
 
 class Button(pg.sprite.Sprite):
-    def __init__(self, groups, name, surfs, pos, font):
+    def __init__(self, groups, name, surfs, pos, font, txt_color):
         super().__init__(groups)
         self.selected = False
         self.surfs = surfs
@@ -125,9 +125,13 @@ class Button(pg.sprite.Sprite):
         self.pos = pos
         self.rect = self.image.get_frect(center = self.pos)
         self.font = font
-        self.selected_color = '#ffe8f9'
-        self.unselected_color = '#ffb5ed'
-        self.font_color = self.unselected_color
+        if txt_color == 'light':
+            self.selected_color = '#ffe8f9'
+            self.unselected_color = '#ffb5ed'
+        else: 
+            self.selected_color = 'white'
+            self.unselected_color = '#eb95d6'
+        self.font_color = self.selected_color
         self.name = name
         self.text = self.font.render(self.name, True, self.font_color)
         self.text_rect = self.text.get_frect(center = (self.rect.center[0], self.rect.center[1] + 22))
@@ -168,7 +172,7 @@ class Game:
         monitor_size = pg.display.list_modes()[0]
         self.display = pg.display.set_mode((settings.W, settings.H))
         self.fullscreen = False
-        self.font = pg.font.Font(join('assets', 'motley_forces.ttf'), 80)
+        self.font = pg.font.Font(join('assets', 'motley_forces.ttf'), 90)
         pg.display.set_caption("Dress Up Game")
         if not self.fullscreen:  # These just slow down game launch if done in fullscreen
             os.environ["SDL_VIDEO_CENTERED"] = "1"  # Centers window
@@ -198,12 +202,18 @@ class Game:
                              'selected': pg.image.load(join('assets', 'img', 'ui', 'button_selected.png')).convert_alpha(),
                              'unselected': pg.image.load(join('assets', 'img', 'ui', 'button_unselected.png')).convert_alpha()
         }
+        
+        self.return_button_surfs = {
+                                    'selected': pg.image.load(join('assets', 'img', 'ui', 'return_button_selected.png')).convert_alpha(),
+                                    'unselected': pg.image.load(join('assets', 'img', 'ui', 'return_button_unselected.png')).convert_alpha()                                    
+        }
 
         self.heart_surf = pg.image.load(join(asset_location, 'img', 'ui', 'heart.png')).convert_alpha()
 
         # Sprite groups
         self.start_sprites = pg.sprite.Group()
         self.play_sprites = pg.sprite.Group()
+        self.about_sprites = pg.sprite.Group()
         self.options_sprites = pg.sprite.Group()
 
     def start(self):
@@ -211,10 +221,10 @@ class Game:
         self.display.fill('black')
 
         # Sprites
-        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1495, 290), self.font)
-        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1495, 475), self.font)
-        about_button = Button(self.start_sprites, 'about', self.button_surfs, (1495, 660), self.font)
-        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1495, 845), self.font)
+        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1495, 290), self.font, 'light')
+        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1495, 475), self.font, 'light')
+        about_button = Button(self.start_sprites, 'about', self.button_surfs, (1495, 660), self.font, 'light')
+        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1495, 845), self.font, 'light')
 
         menu_box = pg.image.load(join('assets', 'img', 'ui', 'start_menu_box.png')).convert_alpha()
 
@@ -252,6 +262,8 @@ class Game:
                             sprite.kill()
                         self.play()
                     elif options_button.check_for_input():
+                        for sprite in self.start_sprites:
+                            sprite.kill()
                         self.options()
                     elif close_button.check_for_input():
                         self.running = False
@@ -264,9 +276,41 @@ class Game:
             self.start_sprites.draw(self.display)
             self.start_sprites.update(self.display)
             pg.display.flip()
+        pg.quit()
+        exit()
 
     def options(self):
-        print('options')
+        
+        self.display.fill('black')
+        
+        # Sprites
+        options_bg = pg.image.load(join('assets', 'img', 'ui', 'options_background.png')).convert_alpha()
+        
+        return_button = Button(self.options_sprites, 'return to start menu', self.return_button_surfs, (settings.W / 2, 965), self.font, 'dark')
+        
+        # Loop
+        while self.running:
+            self.dt = self.clock.tick() / 1000
+            # Event loop
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.running = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        self.running = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if return_button.check_for_input():
+                        for sprite in self.options_sprites:
+                            sprite.kill()
+                        self.start()
+
+            # Render
+            self.display.blit(options_bg)
+            self.options_sprites.draw(self.display)
+            self.options_sprites.update(self.display)
+            pg.display.flip()
+        pg.quit()
+        exit()
 
     def play(self):
 

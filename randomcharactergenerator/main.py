@@ -160,6 +160,81 @@ class Button(pg.sprite.Sprite):
         if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
             return 1
 
+class Slider(pg.sprite.Sprite):
+    def __init__(self, groups, surfs, pos):
+        super().__init__(groups)
+        self.pos = pos
+        self.surfs = surfs
+        self.selected = False
+        self.in_use = False
+        self.image = self.surfs['unselected']
+        self.rect = self.image.get_frect(center = self.pos)
+        self.bounds = (self.rect.centerx - 600, self.rect.centerx)
+        self.idx = 100
+        
+    def update(self, display):
+        if not self.in_use:
+            if self.check_for_input():
+                self.selected = True
+                if pg.mouse.get_just_pressed()[0]:
+                    self.in_use = True
+            else:
+                self.selected = False
+            if self.selected:
+                if not pg.mouse.get_pressed()[0]:
+                    self.image = self.surfs['selected']
+            else:
+                self.image = self.surfs['unselected']
+        else: 
+            if not pg.mouse.get_pressed()[0]:
+                self.in_use = False
+            else: 
+                mouse_x = pg.mouse.get_pos()[0]
+                if mouse_x > self.bounds[0] and mouse_x < self.bounds[1]:
+                    self.rect.center = (mouse_x, self.pos[1])
+                self.idx = 100 - round((self.bounds[1] - self.rect.centerx) / 6)
+                return self.idx
+            
+
+    def check_for_input(self):
+        pos = (pg.mouse.get_pos())
+        if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
+            return 1
+
+class Checkbox(pg.sprite.Sprite):
+    def __init__(self, groups, surfs, pos):
+        super().__init__(groups)
+        self.selected = False
+        self.surfs = surfs
+        self.pos = pos
+        self.image = self.surfs['unselected']
+        self.rect = self.image.get_frect(center = self.pos)
+        
+    def update(self, display):
+        if not self.selected: 
+            if self.check_for_input():
+                if not pg.mouse.get_pressed()[0]:
+                    self.image = self.surfs['unselected_hover']
+                if pg.mouse.get_just_pressed()[0]:
+                    self.selected = True
+            else: 
+                self.image = self.surfs['unselected']
+        else: 
+            if self.check_for_input():
+                if pg.mouse.get_just_pressed()[0]:
+                    self.image = self.surfs['unselected_hover']
+                    self.selected = False
+                elif not pg.mouse.get_pressed()[0]:
+                    self.image = self.surfs['selected_hover']
+            else: 
+                self.image = self.surfs['selected']
+        
+    def check_for_input(self):
+        pos = (pg.mouse.get_pos())
+        if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
+            return 1
+        
+
 
 class Game:
 
@@ -210,8 +285,15 @@ class Game:
         }
         
         self.slider_surfs = {
-                             'base': pg.image.load(join('asseets', 'img', 'ui', 'slider.png')).convert_alpha(),
-                             'knob': pg.image.load(join('asseets', 'img', 'ui', 'slider_knob.png')).convert_alpha()
+                             'unselected': pg.image.load(join('assets', 'img', 'ui', 'slider_knob_unselected.png')).convert_alpha(),
+                             'selected': pg.image.load(join('assets', 'img', 'ui', 'slider_knob_selected.png')).convert_alpha()
+        }
+        
+        self.checkbox_surfs = {
+                               'unselected': pg.image.load(join('assets', 'img', 'ui', 'checkbox_unchecked.png')).convert_alpha(),
+                               'unselected_hover': pg.image.load(join('assets', 'img', 'ui', 'checkbox_unchecked_hover.png')).convert_alpha(),
+                               'selected': pg.image.load(join('assets', 'img', 'ui', 'checkbox_checked.png')).convert_alpha(),
+                               'selected_hover': pg.image.load(join('assets', 'img', 'ui', 'checkbox_checked_hover.png')).convert_alpha()
         }
         
         # Imports: Background Hearts
@@ -295,6 +377,11 @@ class Game:
         
         return_button = Button(self.options_sprites, 'return to start menu', self.return_button_surfs, (settings.W / 2, 965), self.font, 'dark')
         
+        fullscreen_checkbox = Checkbox(self.options_sprites, self.checkbox_surfs, (1480, 260))
+        master_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 430))
+        music_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 610))
+        sfx_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 790))
+                
         # Loop
         while self.running:
             self.dt = self.clock.tick() / 1000

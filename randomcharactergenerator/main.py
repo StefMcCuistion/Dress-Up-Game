@@ -157,8 +157,6 @@ class Button(pg.sprite.Sprite):
             return 1
 
 
-
-
 class Game:
 
     def __init__(self):
@@ -213,9 +211,10 @@ class Game:
         self.display.fill('black')
 
         # Sprites
-        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1495, 345), self.font)
-        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1495, 575), self.font)
-        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1495, 805), self.font)
+        start_button = Button(self.start_sprites, 'start', self.button_surfs, (1495, 290), self.font)
+        options_button = Button(self.start_sprites, 'options', self.button_surfs, (1495, 475), self.font)
+        about_button = Button(self.start_sprites, 'about', self.button_surfs, (1495, 660), self.font)
+        close_button = Button(self.start_sprites, 'close', self.button_surfs, (1495, 845), self.font)
 
         menu_box = pg.image.load(join('assets', 'img', 'ui', 'start_menu_box.png')).convert_alpha()
 
@@ -275,7 +274,7 @@ class Game:
 
         # Sprites
         self.player = Player(self.play_sprites, self.player_parts)
-        bg = pg.image.load(join('assets', 'img', 'test_bg.png')).convert_alpha()
+        play_bg = pg.image.load(join('assets', 'img', 'ui', 'halftone_bg.png')).convert_alpha()
 
         # Loop
         while self.running:
@@ -300,7 +299,7 @@ class Game:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     self.player.change_appearance()
             # Render
-            self.display.blit(bg)
+            self.display.blit(play_bg)
             self.play_sprites.draw(self.display)
             pg.display.flip()
 

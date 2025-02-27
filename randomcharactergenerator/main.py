@@ -2,6 +2,8 @@ import io
 from random import randint, uniform
 import pygame as pg
 
+import json
+
 # from pygame import mixer
 from os.path import join
 import os
@@ -161,7 +163,7 @@ class Button(pg.sprite.Sprite):
             return 1
 
 class Slider(pg.sprite.Sprite):
-    def __init__(self, groups, surfs, pos):
+    def __init__(self, groups, surfs, pos, user_settings, name):
         super().__init__(groups)
         self.pos = pos
         self.surfs = surfs
@@ -170,7 +172,10 @@ class Slider(pg.sprite.Sprite):
         self.image = self.surfs['unselected']
         self.rect = self.image.get_frect(center = self.pos)
         self.bounds = (self.rect.centerx - 600, self.rect.centerx)
-        self.idx = 100
+        self.name = name
+        self.user_settings = user_settings
+        self.idx = int(self.user_settings[name])
+        self.rect.centerx += (self.idx * 6) - 600
         
     def update(self, display):
         if not self.in_use:
@@ -193,18 +198,21 @@ class Slider(pg.sprite.Sprite):
                 if mouse_x > self.bounds[0] and mouse_x < self.bounds[1]:
                     self.rect.center = (mouse_x, self.pos[1])
                 self.idx = 100 - round((self.bounds[1] - self.rect.centerx) / 6)
-                return self.idx
             
-
     def check_for_input(self):
         pos = (pg.mouse.get_pos())
         if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
             return 1
 
+    def give_idx(self):
+        return self.idx
+
 class Checkbox(pg.sprite.Sprite):
-    def __init__(self, groups, surfs, pos):
+    def __init__(self, groups, surfs, pos, user_settings, name):
         super().__init__(groups)
-        self.selected = False
+        self.user_settings = user_settings
+        self.name = name
+        self.selected = self.user_settings[name]
         self.surfs = surfs
         self.pos = pos
         self.image = self.surfs['unselected']
@@ -234,7 +242,8 @@ class Checkbox(pg.sprite.Sprite):
         if pos[0] in (range(int(self.rect.left), int(self.rect.right))) and pos[1] in range(int(self.rect.top), int(self.rect.bottom)):
             return 1
         
-
+    def give_state(self):
+        return self.selected
 
 class Game:
 
@@ -243,6 +252,21 @@ class Game:
         # Setup
         pg.init()
         pg.font.init()
+        
+        self.user_settings = {
+                              "Fullscreen": False,
+                              "Master Volume": 100,
+                              "Music Volume": 100,
+                              "SFX Volume": 100
+        }
+        
+        try:
+            with open('user_settings.txt') as settings_file:
+                self.user_settings = json.load(settings_file)
+                print(self.user_settings)
+        except: 
+            print('could not load user settings')
+        
         ctypes.windll.user32.SetProcessDPIAware()  # keeps Windows GUI scale settings from messing with resolution
         monitor_size = pg.display.list_modes()[0]
         self.display = pg.display.set_mode((settings.W, settings.H))
@@ -377,10 +401,10 @@ class Game:
         
         return_button = Button(self.options_sprites, 'return to start menu', self.return_button_surfs, (settings.W / 2, 965), self.font, 'dark')
         
-        fullscreen_checkbox = Checkbox(self.options_sprites, self.checkbox_surfs, (1480, 260))
-        master_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 430))
-        music_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 610))
-        sfx_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 790))
+        fullscreen_checkbox = Checkbox(self.options_sprites, self.checkbox_surfs, (1480, 260), self.user_settings, "Fullscreen")
+        master_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 430), self.user_settings, "Master Volume")
+        music_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 610), self.user_settings, "Music Volume")
+        sfx_volume_slider = Slider(self.options_sprites, self.slider_surfs, (1750, 790), self.user_settings, "SFX Volume")
                 
         # Loop
         while self.running:
@@ -394,9 +418,19 @@ class Game:
                         self.running = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if return_button.check_for_input():
+                        with open('user_settings.txt', 'w') as settings_file:
+                            json.dump(self.user_settings, settings_file)
                         for sprite in self.options_sprites:
                             sprite.kill()
                         self.start()
+            
+            # Update User Settings
+            self.user_settings['Fullscreen'] = fullscreen_checkbox.give_state()
+            self.user_settings['Master Volume'] = master_volume_slider.give_idx()
+            self.user_settings['Music Volume'] = music_volume_slider.give_idx()
+            self.user_settings['SFX Volume'] = sfx_volume_slider.give_idx()
+            print(self.user_settings)
+
 
             # Render
             self.display.blit(options_bg)

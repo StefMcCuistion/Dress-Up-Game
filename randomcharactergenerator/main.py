@@ -184,12 +184,12 @@ class Game:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         asset_location = os.path.join(current_dir, "assets")
 
-        # Imports
+        # Imports: Cursor
         cursor_surf = pg.image.load(join(asset_location, 'img', 'ui', 'mouse.png')).convert_alpha()
         cursor = pg.cursors.Cursor((0,0), cursor_surf)
         pg.mouse.set_cursor(cursor)
 
-
+        # Imports: Player
         self.player_parts = {}
         for folder_path, sub_folders, file_names in walk(join(asset_location, "img", "player_pieces")):
             if file_names:
@@ -198,6 +198,7 @@ class Game:
                     surf = pg.image.load(path).convert_alpha()
                     self.player_parts[file_name.split('.')[0]] = surf
 
+        # Imports: Buttons and Sliders
         self.button_surfs = {
                              'selected': pg.image.load(join('assets', 'img', 'ui', 'button_selected.png')).convert_alpha(),
                              'unselected': pg.image.load(join('assets', 'img', 'ui', 'button_unselected.png')).convert_alpha()
@@ -207,7 +208,13 @@ class Game:
                                     'selected': pg.image.load(join('assets', 'img', 'ui', 'return_button_selected.png')).convert_alpha(),
                                     'unselected': pg.image.load(join('assets', 'img', 'ui', 'return_button_unselected.png')).convert_alpha()                                    
         }
-
+        
+        self.slider_surfs = {
+                             'base': pg.image.load(join('asseets', 'img', 'ui', 'slider.png')).convert_alpha(),
+                             'knob': pg.image.load(join('asseets', 'img', 'ui', 'slider_knob.png')).convert_alpha()
+        }
+        
+        # Imports: Background Hearts
         self.heart_surf = pg.image.load(join(asset_location, 'img', 'ui', 'heart.png')).convert_alpha()
 
         # Sprite groups
